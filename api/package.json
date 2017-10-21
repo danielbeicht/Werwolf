@@ -1,0 +1,11 @@
+{
+  "name": "werwolf_api",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.1",
+    "express": "^4.15.4",
+    "knuth-shuffle": "^1.0.1"
+  }
+}

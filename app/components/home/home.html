@@ -1,0 +1,369 @@
+
+<!-- Startseite -->
+<div class="row" ng-show="status == -1">
+    <div class="col s12">
+        <center>
+            <h3 style="margin-top: 20%; font-family:Comic Sans MS; color: #fefefe" >Werwolf</h3>
+            <img class="responsive-img center-align" style="max-width: 30%" src="/assets/wolf.png"><br>
+        <button type="button" class='btn btn-default' style="margin-top: 30px" ng-click="status=0; createNewMatch(); isGameMaster=true">Neues Spiel leiten</button><br>
+        <button type="button" class='btn btn-default' style="margin-top: 40px" ng-click="status=1; isGameMaster=false">Spiel beitreten</button>
+        </center>
+    </div>
+</div>
+
+<!-- Gamemaster Settings -->
+<div ng-if="status == 0">
+    <ul tabs reload="allTabContentLoaded">
+        <li class="tab col s4"><a class="active" href="#playerlist"><i class="material-icons tabicon">format_list_bulleted</i></a></li>
+        <li class="tab col s4"><a href="#settings"><i class="material-icons tabicon">settings</i></a></li>
+        <li class="tab col s4"><a href="#roles"><i class="material-icons tabicon">help</i></a></li>
+    </ul>
+    <div class="row">
+        <div id="playerlist" class="col s12">
+            <center style="color: #1EA0F4" style="margin-top: 10px"><h5>Spiele-ID: {{ matchID }}</h5></center>
+            <h4 class="whiteText">Spieler-Übersicht</h4>
+            <ul class="collection with-header primaryBackground" style="margin-top: 10px">
+                <li class="collection-header"><h5>Spieler ({{ match.players.length }})</h5></li>
+                <li class="collection-item" ng-repeat="player in match.players">{{ player.playerName }} - {{ roles[player.role].name }}</li>
+            </ul>
+            <div class="col s12 m6">
+                <center><button class="btn waves-effect waves-light" style="margin-top: 10px" type="submit" name="action" ng-click="assignRoles()" ng-disabled="match.players.length < 1">Rollen zuordnen
+                    <i class="material-icons right">send</i>
+                    </button>
+                    <button class="btn waves-effect waves-light" style="margin-top: 10px"  type="submit" name="action" ng-click="startMatch()" ng-disabled="!rolesAssigned">Spiel starten
+                        <i class="material-icons right">send</i>
+                    </button>
+                </center>
+            </div>
+        </div>
+        <div id="settings" class="col s12">
+            <center style="color: #1EA0F4" style="margin-top: 10px"><h5>Spiele-ID: {{ matchID }}</h5></center>
+            <h4 class="whiteText">Spiele-Einstellungen</h4>
+            <h5 class="whiteText">Werwölfe</h5>
+            <select class="whiteText" ng-model="$parent.inputWerewolfesCount" ng-options="c as c.label for c in inputWerwolfes" material-select watch></select>
+            <h5 class="whiteText">Dorfbewohner</h5>
+            <select class="whiteText" ng-model="$parent.inputDorfbewohnerCount" ng-options="c as c.label for c in inputDorfbewohner" material-select watch></select>
+            <table>
+                <tr ng-repeat="role in roles" ng-show="$index%2==0 && $index < 8 && $index != 0 && $index != 1">
+                    <td><div class="switch"><label><input id="profile-switch-input" type="checkbox" ng-model="roles[$index].selected"><span id="profile-switch-lever" class="lever"></span>{{ roles[$index].name }}</label></div></td>
+                    <td><div class="switch"><label><input type="checkbox" ng-model="roles[$index+1].selected"><span class="lever"></span>{{ roles[$index+1].name }}</label></div></td>
+                </tr>
+            </table>
+            <center class="whiteText divDropdown" ng-click="showMoreRoles = true" ng-hide="showMoreRoles == true"><p>Zeige weitere Rollen</p></center>
+            <center class="whiteText" ng-click="showMoreRoles = false" ng-hide="showMoreRoles == false"><p>Verstecke weitere Rollen</p></center>
+            <table>
+                <tr ng-repeat="role in roles" ng-show="$index%2==0 && $index > 6 && showMoreRoles">
+                    <td><div class="switch"><label><input type="checkbox" ng-model="roles[$index].selected"><span class="lever"></span>{{ roles[$index].name }}</label></div></td>
+                    <td><div class="switch"><label><input type="checkbox" ng-model="roles[$index+1].selected"><span class="lever"></span>{{ roles[$index+1].name }}</label></div></td>
+                </tr>
+            </table>
+            <br><br>
+            <center><span class="whiteText" ng-show="!rolesAssigned">Die Rollen müssen vor dem Spielstart im Reiter "Spielerliste" zugewiesen werden.</span><br>
+            </center>
+        </div>
+        <div id="roles" class="col s12">
+            <center style="color: #1EA0F4" style="margin-top: 10px"><h5>Spiele-ID: {{ matchID }}</h5></center>
+            <h4 class="whiteText">Rolleninformation</h4>
+            <ul class="collapsible" data-collapsible="accordion">
+                <li ng-repeat="role in roles | orderBy:'name'">
+                    <div class="collapsible-header primaryBackground whiteText">{{ role.name }}</div>
+                    <div class="collapsible-body primaryBackground whiteText">{{ role.description }}</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<!-- Neuem Spiel beitreten -->
+<div ng-show="status == 1" style="margin-top: 25%">
+    <center><h4 style="color: white; font-family:Comic Sans MS">Werwolf</h4></center>
+    <center style="margin-top: 20px"><h5 style="color: white; font-family:Comic Sans MS">Die Spiele-ID erhältst du vom Spielleiter.</h5></center>
+        <form class="col s12">
+            <div class="row">
+                <div class="input-field col s12 playerjoin1">
+                    <input id="inputMatchID" ng-model="inputMatchID" type="number" class="validate" style="color: white">
+                    <label for="inputMatchID">Spiele-ID</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12 playerjoin1">
+                    <input id="inputPlayerName" ng-model="inputPlayerName" type="text" class="validate" style="color: white">
+                    <label for="inputPlayerName">Spielername</label>
+                </div>
+            </div>
+            <center>
+            <button class="btn waves-effect waves-light" style="background: #424242" type="submit" name="action" ng-click="joinMatch()">Beitreten
+                <i class="material-icons right">send</i>
+            </button></center>
+        </form>
+</div>
+
+<!-- Wartehalle -->
+<div ng-if="status == 2">
+    <center>
+    <h3 style="font-family:Comic Sans MS; color: white">Wartehalle</h3>
+        <p style="margin-top: 30px; font-family:Comic Sans MS; color: white">Warten auf weitere Spieler. Der Spielleiter kann das Spiel jederzeit starten.</p>
+        <div class="preloader-wrapper big active" style="margin-top: 30px">
+            <div class="spinner-layer spinner-blue">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+            </div>
+
+            <div class="spinner-layer spinner-red">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+            </div>
+
+            <div class="spinner-layer spinner-yellow">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+            </div>
+
+            <div class="spinner-layer spinner-green">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+            </div>
+        </div>
+    </center>
+    <p style="margin-top: 30px; font-family:Comic Sans MS; color: white; margin-top: 30px">Spieleranzahl: {{ match.players.length }}</p>
+    <div class="chip" ng-repeat="player in match.players">{{ player.playerName }}</div>
+</div>
+
+
+
+<!-- Gamemaster Spiel -->
+<div ng-if="status == 3 && isGameMaster">
+    <div class="row">
+        <div class="col s12">
+            <ul tabs reload="allTabContentLoaded">
+                <li class="tab col s6"><a class="active" href="#uebersicht">Spielerübersicht</a></li>
+                <li class="tab col s6"><a href="#abstimmung">Abstimmung</a></li>
+            </ul>
+        </div>
+        <div id="uebersicht" class="col s12">
+            <h5 class="whiteText">Spieler ({{ match.players.length }})</h5>
+            <table class="bordered">
+                <tr ng-repeat="player in match.players" class="whiteText">
+                    <td>{{ player.playerName }}</td>
+                    <td>
+                        <span ng-class="{ 'secondary-content new badge blueBackground': match.players[$index].alive, 'secondary-content new badge red': !match.players[$index].alive }" data-badge-caption="">
+                            <span ng-show="match.players[$index].alive">{{ roles[player.role].name }}</span>
+                            <span ng-show="!match.players[$index].alive">{{ roles[player.role].name }}</span>
+                        </span>
+                        <span class="secondary-content" ng-if="match.players[$index].alive" ng-click="killPlayer($index)"><i class="material-icons bluePrimaryIcon">clear</i></span>
+                        <span class="secondary-content" ng-if="!match.players[$index].alive" ng-click="revivePlayer($index)"><i class="material-icons bluePrimaryIcon">add</i></span>
+
+                        <span class="secondary-content" ng-click="promoteMayor($index)"><i ng-class="{ 'grayIcon': !match.players[$index].mayor, 'greenIcon': match.players[$index].mayor, 'fa fa-balance-scale fa-lg': true }"></i></span>
+                        <span ng-show="armorExists()" class="secondary-content" ng-click="swapLoverStatus($index)"><i ng-class="{ 'grayIcon': !match.players[$index].lover, 'redIcon': match.players[$index].lover, 'fa fa-heart fa-lg': true }" aria-hidden="true"></i></span>
+                    </td>
+                </tr>
+            </table>
+            <div style="margin-top: 20px">
+                <span ng-show="armorExists()"><i class="fa fa-heart fa-lg redIcon" aria-hidden="true"></i> <span class="whiteText">Liebespaar;</span>&nbsp;</span>
+                <i class="fa fa-balance-scale fa-lg greenIcon" aria-hidden="true"></i> <span class="whiteText">Bürgermeister</span>
+                <center style="margin-top: 20px"><button class="btn waves-effect waves-light" type="submit" name="action" ng-click="handoutThiefCards()" ng-show="match.thiefStatus == 0 && thiefExists()">Dieb Entscheidung
+                    <i class="material-icons right">send</i>
+                </button></center>
+                <span ng-show="match.thiefStatus == 1 && thiefExists()">Bitte warten bis der Dieb seine Karte ausgewählt hat.</span>
+                <center style="margin-top: 20px"><button class="btn waves-effect waves-light" type="submit" name="action" ng-click="newMatch()">Neues Spiel starten
+                    <i class="material-icons right">send</i>
+                </button></center>
+            </div>
+        </div>
+        <div id="abstimmung" class="col s12">
+                <ul class="collection with-header" ng-show="!match.showPoll">
+                    <li class="collection-header"><h4>Spieler - Nominierung</h4></li>
+                    <li class="collection-item" ng-repeat="player in match.players" ng-show="player.alive">{{ player.playerName }} - {{ roles[player.role].name }}
+                        <span ng-class="{ 'new badge blue': match.players[$index].nominated, 'new badge black': !match.players[$index].nominated }" data-badge-caption="" ng-show="!match.votingPhase">
+                            <span ng-show="match.players[$index].nominated">Nominiert</span><span ng-show="!match.players[$index].nominated">Nicht nominiert</span></span>
+                        <span class="secondary-content" ng-show="match.players[$index].nominated && !match.votingPhase" ng-click="undoNominatePlayer($index)">
+                            <i class="material-icons bluePrimaryIcon">clear</i>
+                        </span>
+                        <span ng-show="player.hasVoted && match.votingPhase" class="new badge" data-badge-caption="Voted"></span>
+                        <span class="secondary-content" ng-show="!match.players[$index].nominated" ng-click="nominatePlayer($index)"><i class="material-icons bluePrimaryIcon">add</i></span>
+                    </li>
+                </ul>
+            <center>
+                <button class="btn waves-effect waves-light" type="submit" name="action" ng-click="startVotingPhase()" ng-show="!match.votingPhase && !match.showPoll">Voting starten
+                    <i class="material-icons right">send</i>
+                </button>
+                <button class="btn waves-effect waves-light" type="submit" name="action" ng-click="stopVotingPhase()" ng-show="match.votingPhase && !match.showPoll && match.pollCountdown == 0">Voting beenden
+                    <i class="material-icons right">send</i>
+                </button>
+                <h5 class="whiteText" ng-show="match.pollCountdown > 0">Abstimmung endet in {{ match.pollCountdown }}</h5>
+
+                <button class="btn waves-effect waves-light" type="submit" name="action" ng-click="resetVoting()" ng-show="match.showPoll" style="margin-top: 20px">Neues Voting
+                    <i class="material-icons right">send</i>
+                </button>
+            </center>
+            <div ng-if="!match.votingPhase && match.showPoll" style="margin-top: 20px">
+                <canvas id="bar1" class="chart chart-bar"
+                        chart-data="data" chart-labels="labels" class="whiteText"> chart-series="series"
+                </canvas>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th class="whiteText">Name</th>
+                        <th class="whiteText">Gewählt von</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="player in votingPlayerArray" ng-show="player.alive">
+                        <td class="whiteText">{{ player.playerName }}</td>
+                        <td class="whiteText">{{ generateVoteString(player) }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- Spieler Spiel -->
+<div ng-if="status == 3 && !isGameMaster">
+    <div class="row">
+        <div class="col s12">
+            <ul tabs reload="allTabContentLoaded">
+                <li class="tab col s6"><a class="active" href="#information">Information</a></li>
+                <li class="tab col s6"><a href="#playervoting">Abstimmung</a></li>
+                <li class="tab col s4"><a href="#playerRolesInfo"><i class="material-icons tabicon">help</i></a></li>
+            </ul>
+        </div>
+        <div id="information" class="col s12">
+            <br>
+
+            <!-- Dieb Kartenwahl -->
+            <div ng-if="match.players[playerID].role == 6 && match.thiefStatus == 1">
+
+                <ul class="collection">
+                    <li class="collection-item">
+                        <span style="font-size: 150%">Dieb Kartenauswahl</span>
+                    </li>
+                    <li class="collection-item" ng-repeat="card in match.thiefCards track by $index">
+                        {{ roles[card].name }}
+                        <span class="new badge blue" data-badge-caption="" ng-click="setNewThiefRole(card)">
+                            <span>Wählen</span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+            <ul class="collapsible primaryBackground" data-collapsible="accordion">
+                <li>
+                    <div class="collapsible-header whiteText primaryBackground"><i class="material-icons">info_outline</i>Rolle/Status</div>
+                    <div class="collapsible-body whiteText primaryBackground"><span>
+                        <h4 class="whiteText">Du bist {{ roles[match.players[playerID].role].name }}</h4> (Bilder folgen)<br><br>
+                        <span class="whiteText">Du <span ng-show="match.players[playerID].alive">lebst</span> <span ng-show="!match.players[playerID].alive">bist tot</span></span>
+                    </span></div>
+                </li>
+                <li>
+                    <div class="collapsible-header whiteText primaryBackground"><i class="material-icons">subject</i>Rollenbeschreibung</div>
+                    <div class="collapsible-body whiteText primaryBackground"><span>
+                        {{ roles[match.players[playerID].role].description }}
+                    </span></div>
+                </li>
+            </ul>
+
+
+            <ul class="collection">
+                <li class="collection-item">
+                    <span style="font-size: 150%">Spieler ({{ match.players.length }})</span>
+                    <span class="secondary-content" ng-click="showAdditionalInformation()"><i class="material-icons">remove_red_eye</i></span><span class="secondary-content" ng-show="additionalInformationTimer > 0">&nbsp;{{ additionalInformationTimer }}&nbsp;</span>
+                </li>
+                <li class="collection-item" ng-repeat="player in match.players">{{ player.playerName }}
+                    <span ng-class="{ 'new badge': match.players[$index].alive, 'new badge red': !match.players[$index].alive }" data-badge-caption="">
+                        <span ng-show="match.players[$index].alive">Lebt</span>
+                        <span ng-show="!match.players[$index].alive">{{ roles[match.players[$index].role].name }}</span>
+                    </span>
+                    <span class="new badge green" data-badge-caption="" ng-show="match.players[$index].mayor">
+                        <span>Bürgermeister</span>
+                    </span>
+                    <span class="new badge red" data-badge-caption="" ng-show="match.players[$index].lover && match.players[playerID].lover && additionalInformationTimer > 0 || !match.players[$index].alive && match.players[$index].lover && additionalInformationTimer > 0">
+                        <span>Liebespaar</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+        <div id="playervoting" class="col s12">
+            <center>
+            <div ng-if="match.votingPhase && !hasVoted && match.players[playerID].alive">
+                <p ng-repeat="player in votingPlayerArray" ng-show="player.nominated">
+                    <input type="radio" id="{{ player.playerID }}" ng-model="selection.voteRadioSelected" ng-value="player.playerID" name="lunch">
+                    <label for="{{ player.playerID }}" class="whiteText">{{ player.playerName }}</label>
+                </p>
+                <button ng-class="{'btn waves-effect waves-light': true, 'pulse': match.pollCountdown > 0}" type="submit" name="action" ng-click="votePlayer()">Stimme abgeben
+                    <i class="material-icons right">send</i>
+                </button>
+            </div>
+            <h5 class="whiteText" ng-show="match.votingPhase && match.pollCountdown > 0">Abstimmung endet in {{ match.pollCountdown }}</h5>
+
+            <div ng-if="hasVoted && match.votingPhase" class="whiteText">
+                Warten bis Ende der Abfrage.
+            </div>
+            </center>
+            <div ng-if="!match.votingPhase && match.showPoll" style="margin-top: 20px">
+                <canvas id="bar" class="chart chart-bar"
+                        chart-data="$parent.data" chart-labels="$parent.labels"> chart-series="series"
+                </canvas>
+                <table>
+                    <thead>
+                    <tr>
+                        <th class="whiteText">Name</th>
+                        <th class="whiteText">Gewählt von</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr ng-repeat="player in votingPlayerArray" ng-show="player.alive">
+                        <td class="whiteText">{{ player.playerName }}</td>
+                        <td class="whiteText">{{ generateVoteString(player) }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div ng-if="!match.votingPhase && !match.showPoll && match.players[playerID].alive" class="whiteText" style="margin-top: 20px" class="center-align">
+                Zeit zum nominieren oder schlafen!
+            </div>
+
+            <div ng-if="!match.players[playerID].alive" class="whiteText">
+                Du bist tot.
+            </div>
+        </div>
+
+        <div id="playerRolesInfo" class="col s12">
+            <h4 class="whiteText">Rolleninformation</h4>
+            <ul class="collapsible" data-collapsible="accordion">
+                <li ng-repeat="role in roles | orderBy:'name'">
+                    <div class="collapsible-header primaryBackground whiteText">{{ role.name }}</div>
+                    <div class="collapsible-body primaryBackground whiteText">{{ role.description }}</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
