@@ -300,9 +300,9 @@
                 <li class="collection-item" ng-repeat="player in match.players">{{ player.playerName }}
 
                     <span ng-class="{ 'secondary-content new badge blueBackground': match.players[$index].alive, 'secondary-content new badge red': !match.players[$index].alive }" data-badge-caption="" ng-show="additionalInformationTimer > 0 && !match.players[playerID].alive && $index != playerID">
-                            <span ng-show="match.players[$index].alive">{{ roles[player.role].name }}</span>
-                            <span ng-show="!match.players[$index].alive">{{ roles[player.role].name }}</span>
-                        </span>
+                        <span ng-show="match.players[$index].alive">{{ roles[player.role].name }}</span>
+                        <span ng-show="!match.players[$index].alive">{{ roles[player.role].name }}</span>
+                    </span>
 
                     <span ng-class="{ 'new badge': match.players[$index].alive, 'new badge red': !match.players[$index].alive }" data-badge-caption="">
                         <span ng-show="match.players[$index].alive">Lebt</span>
@@ -358,7 +358,10 @@
             </div>
 
             <div ng-if="!match.votingPhase && !match.showPoll && match.players[playerID].alive" class="whiteText" style="margin-top: 20px" class="center-align">
-                Zeit zum nominieren oder schlafen!
+                Nominiert sind:
+                <p ng-repeat="player in match.players" ng-show="player.nominated">
+                    {{ player.playerName }}
+                </p>
             </div>
 
             <div ng-if="!match.players[playerID].alive" class="whiteText">
