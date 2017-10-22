@@ -161,6 +161,7 @@
                 <li class="tab col s6"><a href="#abstimmung">Abstimmung</a></li>
             </ul>
         </div>
+        <!-- Spieler Tabelle -->
         <div id="uebersicht" class="col s12">
             <h5 class="whiteText">Spieler ({{ match.players.length }})</h5>
             <table class="bordered">
@@ -248,6 +249,7 @@
 <!-- Spieler Spiel -->
 <div ng-if="status == 3 && !isGameMaster">
     <div class="row">
+        <!-- Header Tabs -->
         <div class="col s12">
             <ul tabs reload="allTabContentLoaded">
                 <li class="tab col s6"><a class="active" href="#information">Information</a></li>
@@ -260,7 +262,6 @@
 
             <!-- Dieb Kartenwahl -->
             <div ng-if="match.players[playerID].role == 6 && match.thiefStatus == 1">
-
                 <ul class="collection">
                     <li class="collection-item">
                         <span style="font-size: 150%">Dieb Kartenauswahl</span>
@@ -273,6 +274,7 @@
                     </li>
                 </ul>
             </div>
+            <!-- Rolleninfo- und beschreibung -->
             <ul class="collapsible primaryBackground" data-collapsible="accordion">
                 <li>
                     <div class="collapsible-header whiteText primaryBackground"><i class="material-icons">info_outline</i>Rolle/Status</div>
@@ -289,13 +291,19 @@
                 </li>
             </ul>
 
-
+            <!-- Spieler Tabelle -->
             <ul class="collection">
                 <li class="collection-item">
                     <span style="font-size: 150%">Spieler ({{ match.players.length }})</span>
                     <span class="secondary-content" ng-click="showAdditionalInformation()"><i class="material-icons">remove_red_eye</i></span><span class="secondary-content" ng-show="additionalInformationTimer > 0">&nbsp;{{ additionalInformationTimer }}&nbsp;</span>
                 </li>
                 <li class="collection-item" ng-repeat="player in match.players">{{ player.playerName }}
+
+                    <span ng-class="{ 'secondary-content new badge blueBackground': match.players[$index].alive, 'secondary-content new badge red': !match.players[$index].alive }" data-badge-caption="" ng-show="additionalInformationTimer > 0 && !match.players[playerID].alive && $index != playerID">
+                            <span ng-show="match.players[$index].alive">{{ roles[player.role].name }}</span>
+                            <span ng-show="!match.players[$index].alive">{{ roles[player.role].name }}</span>
+                        </span>
+
                     <span ng-class="{ 'new badge': match.players[$index].alive, 'new badge red': !match.players[$index].alive }" data-badge-caption="">
                         <span ng-show="match.players[$index].alive">Lebt</span>
                         <span ng-show="!match.players[$index].alive">{{ roles[match.players[$index].role].name }}</span>
@@ -309,6 +317,8 @@
                 </li>
             </ul>
         </div>
+
+        <!-- Playervoting -->
         <div id="playervoting" class="col s12">
             <center>
             <div ng-if="match.votingPhase && !hasVoted && match.players[playerID].alive">
