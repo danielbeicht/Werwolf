@@ -5,6 +5,7 @@
           'ui.router',
           'ui.materialize',
           'chart.js',
-          'ngAnimate'
+          'ngAnimate',
+            'rzModule'
         ]);
 })();

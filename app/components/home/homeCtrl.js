@@ -20,6 +20,16 @@ if (history_api) history.pushState(null, '', '#StayHere');
         $scope.inputVoteRadioButton = -1;
         $scope.isGameMaster = false;
         $scope.additionalInformationTimer = 0;
+        $scope.dayInputSlider = 9;
+
+        $scope.slider = {
+            value: 10,
+            options: {
+                floor: 0,
+                ceil: 30,
+                showTicks: 10
+            }
+        };
 
         function init() {
             $scope.rolesAssigned = false;
@@ -332,6 +342,22 @@ if (history_api) history.pushState(null, '', '#StayHere');
             });
         }
 
+        $scope.startDayPhase = function (playerID) {
+            console.log($scope.dayInputSlider)
+            var dataObj = {
+                matchID: $scope.matchID,
+                dayTime: $scope.slider.value
+            };
+            $http({
+                method: 'POST',
+                url: 'api/startDayPhase',
+                data: dataObj
+            }).then(function successCallback(response) {
+                console.log("Day phase started");
+            }, function errorCallback(response) {
+            });
+        }
+
         $scope.assignRoles = function () {
             var roles = [];
             for (var i = 0; i < $scope.inputWerewolfesCount.value; i++) {
@@ -620,6 +646,14 @@ if (history_api) history.pushState(null, '', '#StayHere');
             //Materialize.toast($scope.toastText, 1000);
         });
 
+        $scope.$watch('match.dayCountdown', function (newValue, oldValue){
+            $scope.dayCountdownMinutes = Math.floor(newValue / 60);
+            $scope.dayCountdownSeconds = newValue - $scope.dayCountdownMinutes * 60;
+            if ($scope.dayCountdownSeconds < 10) {
+                $scope.dayCountdownSeconds = "0".concat($scope.dayCountdownSeconds);
+            }
+        });
+
         $scope.$watch('status', function (newValue, oldValue) {
             if (newValue == 1 || newValue == 2) {
                 $rootScope.bodylayout = 'wartehalle';
@@ -640,6 +674,10 @@ if (history_api) history.pushState(null, '', '#StayHere');
             if (newValue === 2 && $scope.isGameMaster) {
                 Materialize.toast("Der Dieb hat seine Karte ausgewählt.", 4000, 'blue');
             }
+        });
+
+        $scope.$watch('dayInputSlider', function (newValue, oldValue) {
+            console.log(newValue);
         });
 
         $scope.$watchCollection('match.players', function (newCollection, oldCollection) {

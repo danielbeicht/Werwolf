@@ -39,8 +39,10 @@ app.get('/api/createNewMatch', function (req, res){
     matchStarted: false,
     matchID: matchID,
     votingPhase: false,
+      dayPhase: false,
     showPoll: false,
     pollCountdown : 0,
+      dayCountdown: 0,
     thiefStatus : 0,
     thiefCards : [],
     restartMatch: false
@@ -121,7 +123,7 @@ app.post('/api/stopVotingPhase', function (req, res){
   matches[req.body.matchID].pollCountdown = 10;
   var timeleft = 10;
   var downloadTimer = setInterval(function(){
-    console.log(10 - --timeleft)
+    --timeleft;
     matches[req.body.matchID].pollCountdown = timeleft;
     if(timeleft <= 0){
       // Wenn jemand nicht gevotet hat stimmt er für sich
@@ -141,6 +143,21 @@ app.post('/api/stopVotingPhase', function (req, res){
 
 
   res.send("ok");
+});
+
+app.post('/api/startDayPhase', function (req, res){
+    matches[req.body.matchID].dayPhase = true;
+    var timeleft = req.body.dayTime * 60;
+    var downloadTimer = setInterval(function() {
+        --timeleft;
+        matches[req.body.matchID].dayCountdown = timeleft;
+        console.log(timeleft);
+        if (timeleft <= 0) {
+            clearInterval(downloadTimer);
+            matches[req.body.matchID].dayPhase = false;
+        }
+    },1000);
+    res.send("ok");
 });
 
 app.post('/api/votePlayer', function (req, res){
@@ -189,7 +206,7 @@ app.post('/api/assignRoles', function (req, res) {
   for (var i=matches[req.body.matchID].players.length; i<roles.length; i++) {
     matches[req.body.matchID].thiefCards.push(roles[i]);
   }
-  res.send("ok")
+  res.send("ok");
 });
 
 app.post('/api/startMatch', function (req, res) {
