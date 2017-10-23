@@ -60,24 +60,11 @@
 
 @-moz-keyframes myfirst /* Firefox */
 {
-  /*
-  0%   {background-color:#009688;}
-  10%   {background-color:#8bc34a;}
-  20%  {background-color:#fdd835;}
-  30%   {background-color:#ff9800;}
-  40%   {background-color:#f44336;}
-  50%   {background-color:#e91e63;}
-  60%   {background-color:#673ab7;}
-  70%   {background-color:#3f51b5;}
-  80%   {background-color:#2196f3;}
-  90%   {background-color:#00bcd4;}
-  100%   {background-color:#009688;}
-  */
   0%   {background-color:#311b92;}
   20%  {background-color:#0d47a1;}
-  40%   {background-color:#01579b;}
-  60%   {background-color:#006064;}
-  80%   {background-color:#004d40;}
+  40%   {background-color:#006064;}
+  60%   {background-color:#004d40;}
+  80%   {background-color:#424242;}
   100%   {background-color:#311b92;}
 
 }
