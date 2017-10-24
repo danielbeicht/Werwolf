@@ -17,6 +17,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
         $scope.matchID = -1;
         $scope.status = -1;
         $scope.playerID = -1;
+        $scope.playerName = null;
         $scope.inputVoteRadioButton = -1;
         $scope.isGameMaster = false;
         $scope.additionalInformationTimer = 0;
@@ -243,6 +244,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                     if (response.data.statuscode == 1) {
                         $scope.matchID = response.data.match.matchID;
                         $scope.playerID = response.data.playerID;
+                        $scope.playerName = response.data.playerName;
                         $scope.status = 2;
                     } else if (response.data.statuscode == 3) {
                         Materialize.toast("Spiel wurde bereits gestartet.", 3000, 'blue');
@@ -582,6 +584,26 @@ if (history_api) history.pushState(null, '', '#StayHere');
             }
         }
 
+        $scope.kickPlayer = function (playerID) {
+            //var conf = confirm("Willst du wirklich den Spieler entfernen?");
+            var conf = true;
+            if (conf) {
+                init();
+                var dataObj = {
+                    matchID: $scope.match.matchID,
+                    playerID: playerID
+                };
+                $http({
+                    method: 'POST',
+                    url: 'api/kickPlayer',
+                    data: dataObj
+                }).then(function successCallback(response) {
+                    console.log("Spiel wurde gekickt.");
+                }, function errorCallback(response) {
+                });
+            }
+        }
+
         $scope.$watch('matchID', function (newValue, oldValue) {
             if ($scope.matchID != -1) {
                 (function tick() {
@@ -692,6 +714,22 @@ if (history_api) history.pushState(null, '', '#StayHere');
                     }
                 }
             }
+
+            if (newCollection && oldCollection && newCollection.length < oldCollection.length && !$scope.isGameMaster) {
+                console.log("Jemand ist raus");
+                if (newCollection[$scope.playerID]) {
+                    if (newCollection[$scope.playerID].playerName !== $scope.playerName) {
+                        $scope.status = -1;
+                        Materialize.toast("Du wurdest aus dem Spiel entfernt.", 4000, 'blue');
+                    }
+                } else {
+                    $scope.status = -1;
+                    Materialize.toast("Du wurdest aus dem Spiel entfernt.", 4000, 'blue');
+                }
+
+
+            }
+
         });
 
         $scope.$watch('match.restartMatch', function (newValue, oldValue) {

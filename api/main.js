@@ -8,6 +8,15 @@ var matches = {};
 
 var requestcount = 0;
 
+
+// Array
+Array.prototype.remove = function(from, to) {
+    var rest = this.slice((to || from) + 1 || this.length);
+    this.length = from < 0 ? this.length + from : from;
+    return this.push.apply(this, rest);
+};
+// Array
+
 app.use(bodyParser.json());
 app.use('/assets', express.static(path.join(process.cwd(), '..', 'assets')));
 app.use('/assets', function (req, res, next) {
@@ -54,7 +63,7 @@ app.post('/api/joinMatch', function (req, res){
   if (matches[req.body.matchID]){
     if (matches[req.body.matchID].matchStarted == false){
       matches[req.body.matchID].players.push({playerName: req.body.playerName, playerID: matches[req.body.matchID].players.length, role: -1, alive: true, nominated: false, votes: [], hasVoted: false, mayor: false, lover: false});
-      res.send({match: matches[req.body.matchID], statuscode: 1, playerID: matches[req.body.matchID].players.length-1});
+      res.send({match: matches[req.body.matchID], statuscode: 1, playerID: matches[req.body.matchID].players.length-1, playerName: matches[req.body.matchID].players[matches[req.body.matchID].players.length-1].playerName});
     } else {
       res.send({statuscode: 3})
     }
@@ -209,6 +218,11 @@ app.post('/api/assignRoles', function (req, res) {
   res.send("ok");
 });
 
+app.post('/api/kickPlayer', function (req, res){
+  matches[req.body.matchID].players.remove(req.body.playerID);
+  res.send("ok");
+});
+
 app.post('/api/startMatch', function (req, res) {
   matches[req.body.matchID].matchStarted = true;
   res.send("ok");
@@ -259,6 +273,3 @@ var server = app.listen(82, function () {
     var port = server.address().port;
     console.log("Server is running on Port", port);
 });
-
-
-
