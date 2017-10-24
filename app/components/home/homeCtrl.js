@@ -585,8 +585,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
         }
 
         $scope.kickPlayer = function (playerID) {
-            //var conf = confirm("Willst du wirklich den Spieler entfernen?");
-            var conf = true;
+            var conf = confirm("Willst du wirklich den Spieler entfernen?");
             if (conf) {
                 init();
                 var dataObj = {
