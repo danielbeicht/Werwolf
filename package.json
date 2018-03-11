@@ -23,7 +23,7 @@
     "angular-materialize": "^0.2.2",
     "angular-ui-router": "^1.0.3",
     "angularjs-slider": "^6.4.0",
-    "chart.js": "^2.7.2",
+    "chart.js": "2.3.0",
     "chartjs": "^0.3.24",
     "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",

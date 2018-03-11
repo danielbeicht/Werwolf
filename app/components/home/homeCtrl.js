@@ -641,19 +641,21 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 Materialize.toast("Abstimmung ist jetzt möglich.", 5000, 'blue');
                 $scope.hasVoted = false;
             }
-            if (newValue == false || $scope.isGameMaster) {
+            if (newValue === false || $scope.isGameMaster) {
                 $scope.votingPlayerArray.sort(compare);
                 console.log($scope.votingPlayerArray)
                 $scope.labels = [];
                 $scope.data = [];
                 for (var i = 0; i < $scope.votingPlayerArray.length; i++) {
                     if ($scope.votingPlayerArray[i].alive) {
-                        $scope.labels.push($scope.votingPlayerArray[i].playerName)
-                        $scope.data.push($scope.votingPlayerArray[i].votes.length)
+                        if ($scope.votingPlayerArray[i].nominated || $scope.votingPlayerArray[i].votes.length > 0) {
+                            $scope.labels.push($scope.votingPlayerArray[i].playerName);
+                            $scope.data.push($scope.votingPlayerArray[i].votes.length);
+                        }
                     }
                 }
-                if ($scope.isGameMaster && oldValue == true) {
-                    if ($scope.votingPlayerArray[0].votes.length != $scope.votingPlayerArray[1].votes.length) {
+                if ($scope.isGameMaster && oldValue === true) {
+                    if ($scope.votingPlayerArray[0].votes.length !== $scope.votingPlayerArray[1].votes.length) {
                         $scope.killPlayer($scope.votingPlayerArray[0].playerID);
                     }
                 }

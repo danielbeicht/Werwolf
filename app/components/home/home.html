@@ -353,7 +353,7 @@
                     </thead>
 
                     <tbody>
-                    <tr ng-repeat="player in votingPlayerArray" ng-show="player.alive">
+                    <tr ng-repeat="player in votingPlayerArray" ng-show="player.nominated || player.votes.length > 0">
                         <td class="whiteText">{{ player.playerName }}</td>
                         <td class="whiteText">{{ generateVoteString(player) }}</td>
                     </tr>
