@@ -148,6 +148,8 @@
     </center>
     <p style="margin-top: 30px; font-family:Comic Sans MS; color: white; margin-top: 30px">Spieleranzahl: {{ match.players.length }}</p>
     <div class="chip" ng-repeat="player in match.players">{{ player.playerName }}</div>
+    <br>
+    <center><button class="btn waves-effect waves-light" style="margin-top: 70px" type="submit" name="action" ng-click="leaveMatch()">Wartehalle verlassen</button></center>
 </div>
 
 
