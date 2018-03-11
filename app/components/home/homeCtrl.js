@@ -9,9 +9,9 @@ if (history_api) history.pushState(null, '', '#StayHere');
         .module('werwolf')
         .controller('homeCtrl', homeCtrl);
 
-    homeCtrl.$inject = ['$scope', '$http', '$timeout', '$location', '$anchorScroll', '$interval', '$rootScope'];
+    homeCtrl.$inject = ['$scope', '$http', '$timeout', '$location', '$anchorScroll', '$interval', '$rootScope', '$cookies'];
 
-    function homeCtrl($scope, $http, $timeout, $location, $anchorScroll, $interval, $rootScope) {
+    function homeCtrl($scope, $http, $timeout, $location, $anchorScroll, $interval, $rootScope, $cookies) {
         $scope.match = {matchStarted: false};
         $scope.color = 99;
         $scope.matchID = -1;
@@ -253,6 +253,15 @@ if (history_api) history.pushState(null, '', '#StayHere');
         $scope.labels = [];
 
         $scope.data = [];
+
+
+        // Check if already ingame
+        if ($cookies.get('matchid') && $cookies.get('playername') && $cookies.get('playerid')) {
+            $scope.matchID = $cookies.get('matchid');
+            $scope.playerID = parseInt($cookies.get('playerid'));
+            $scope.playerName = $cookies.get('playername');
+            $scope.status = 2;
+        }
 
 
         $scope.createNewMatch = function () {
@@ -643,10 +652,20 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 }, function errorCallback(response) {
                 });
             }
-        }
+        };
+
+        $scope.leaveMatch = function () {
+            if (confirm("Willst du das Spiel wirklich verlassen?")) {
+                $cookies.remove("matchid", {path: "/"});
+                $cookies.remove("playername", {path: "/"});
+                $cookies.remove("playerid", {path: "/"});
+                $scope.status = -1;
+            }
+
+        };
 
         $scope.$watch('matchID', function (newValue, oldValue) {
-            if ($scope.matchID != -1) {
+            if ($scope.matchID !== -1) {
                 (function tick() {
                     var dataObj = {
                         matchID: $scope.matchID
@@ -749,7 +768,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
             if (newCollection && oldCollection && newCollection.length === oldCollection.length) {
                 for (var i = 0; i < newCollection.length; i++) {
                     if (newCollection[i].alive !== oldCollection[i].alive && !newCollection[i].alive) {
-                        if (i == $scope.playerID) {
+                        if (i === $scope.playerID) {
                             Materialize.toast("Du bist gestorben.", 4000, 'blue');
                         } else {
                             Materialize.toast(newCollection[i].playerName.concat(" ist gestorben."), 4000, 'blue');
@@ -776,7 +795,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
         });
 
         $scope.$watch('match.restartMatch', function (newValue, oldValue) {
-            if ($scope.match.restartMatch == true) {
+            if ($scope.match.restartMatch === true) {
                 if ($scope.isGameMaster) {
 
                     // timer damit clients auch noch von dem var change erfahren

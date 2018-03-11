@@ -1,4 +1,5 @@
 var express = require('express');
+var cookieParser = require('cookie-parser');
 var app = express();
 var path = require('path');
 var bodyParser = require('body-parser');
@@ -19,6 +20,7 @@ Array.prototype.remove = function (from, to) {
 // Array
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use('/assets', express.static(path.join(process.cwd(), '..', 'assets')));
 app.use('/assets', function (req, res, next) {
     res.sendStatus(404);
@@ -38,7 +40,6 @@ app.get('/api/getRequestCount', function (req, res) {
 });
 
 app.get('/api/createNewMatch', function (req, res) {
-
     var matchID;
     do {
         matchID = Math.floor(Math.random() * 1000) + 1;
@@ -64,9 +65,10 @@ app.get('/api/createNewMatch', function (req, res) {
 app.post('/api/joinMatch', function (req, res) {
     if (matches[req.body.matchID]) {
         if (matches[req.body.matchID].matchStarted === false) {
+            var playerID = matches[req.body.matchID].players.length
             matches[req.body.matchID].players.push({
                 playerName: req.body.playerName,
-                playerID: matches[req.body.matchID].players.length,
+                playerID: playerID,
                 role: -1,
                 alive: true,
                 nominated: false,
@@ -75,7 +77,7 @@ app.post('/api/joinMatch', function (req, res) {
                 mayor: false,
                 lover: false
             });
-            res.send({
+            res.cookie("matchid" , req.body.matchID.toString()).cookie("playername" , req.body.playerName).cookie("playerid" , playerID).send({
                 match: matches[req.body.matchID],
                 statuscode: 1,
                 playerID: matches[req.body.matchID].players.length - 1,

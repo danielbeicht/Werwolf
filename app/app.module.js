@@ -2,10 +2,11 @@
     'use strict';
     angular
         .module('werwolf', [
-          'ui.router',
-          'ui.materialize',
-          'chart.js',
-          'ngAnimate',
-            'rzModule'
+            'ui.router',
+            'ui.materialize',
+            'chart.js',
+            'ngAnimate',
+            'rzModule',
+            'ngCookies'
         ]);
 })();
