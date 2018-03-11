@@ -59,7 +59,7 @@ app.get('/api/createNewMatch', function (req, res) {
         restartMatch: false,
         possibleRoles: []
     };
-    res.send({matchID: matchID});
+    res.cookie("gamemaster" , "yes").cookie("matchid" , matchID).send({matchID: matchID});
 });
 
 app.post('/api/joinMatch', function (req, res) {

@@ -32,6 +32,7 @@
                     <button class="btn waves-effect waves-light" style="margin-top: 10px"  type="submit" name="action" ng-click="startMatch()" ng-disabled="!rolesAssigned">Spiel starten
                         <i class="material-icons right">send</i>
                     </button>
+                    <button class="btn waves-effect waves-light" style="margin-top: 10px" type="submit" name="action" ng-click="leaveMatch()">Spiel verlassen</button>
                 </center>
             </div>
         </div>
@@ -186,9 +187,12 @@
                     <i class="material-icons right">send</i>
                 </button></center>
                 <span ng-show="match.thiefStatus == 1 && thiefExists()">Bitte warten bis der Dieb seine Karte ausgewählt hat.</span>
-                <center style="margin-top: 20px"><button class="btn waves-effect waves-light" type="submit" name="action" ng-click="newMatch()">Neues Spiel starten
+                <center style="margin-top: 20px">
+                    <button class="btn waves-effect waves-light" type="submit" name="action" ng-click="newMatch()">Neues Spiel starten
                     <i class="material-icons right">send</i>
-                </button></center>
+                </button><br>
+                    <button class="btn waves-effect waves-light" style="margin-top: 10px" type="submit" name="action" ng-click="leaveMatch()">Spiel verlassen</button>
+                </center>
             </div>
         </div>
         <div id="abstimmung" class="col s12">

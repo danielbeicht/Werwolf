@@ -22,6 +22,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
         $scope.isGameMaster = false;
         $scope.additionalInformationTimer = 0;
         $scope.dayInputSlider = 9;
+        $scope.votingPlayerArray = [];
 
         $scope.slider = {
             value: 10,
@@ -264,6 +265,14 @@ if (history_api) history.pushState(null, '', '#StayHere');
         }
 
 
+        if ($cookies.get('matchid') && $cookies.get('gamemaster')) {
+            console.log("DRIN")
+            $scope.isGameMaster = true;
+            $scope.matchID = $cookies.get('matchid');
+            $scope.status = 0;
+        }
+
+
         $scope.createNewMatch = function () {
             $http({
                 method: 'GET',
@@ -448,9 +457,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 url: 'api/startMatch',
                 data: dataObj
             }).then(function successCallback(response) {
-                if (response.data.statuscode == 1) {
-                    //$scope.status = 3;
-                }
+
             }, function errorCallback(response) {
             });
         }
@@ -659,6 +666,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 $cookies.remove("matchid", {path: "/"});
                 $cookies.remove("playername", {path: "/"});
                 $cookies.remove("playerid", {path: "/"});
+                $cookies.remove("gamemaster", {path: "/"});
                 $scope.status = -1;
             }
 
@@ -697,30 +705,33 @@ if (history_api) history.pushState(null, '', '#StayHere');
         });
         //
         $scope.$watch('match.votingPhase', function (newValue, oldValue) {
-            $scope.votingPlayerArray = $scope.match.players;
-            if (newValue && !$scope.isGameMaster && $scope.match.players[$scope.playerID].alive) {
-                Materialize.toast("Abstimmung ist jetzt möglich.", 5000, 'blue');
-                $scope.hasVoted = false;
-            }
-            if (newValue === false || $scope.isGameMaster) {
-                $scope.votingPlayerArray.sort(compare);
-                console.log($scope.votingPlayerArray)
-                $scope.labels = [];
-                $scope.data = [];
-                for (var i = 0; i < $scope.votingPlayerArray.length; i++) {
-                    if ($scope.votingPlayerArray[i].alive) {
-                        if ($scope.votingPlayerArray[i].nominated || $scope.votingPlayerArray[i].votes.length > 0) {
-                            $scope.labels.push($scope.votingPlayerArray[i].playerName);
-                            $scope.data.push($scope.votingPlayerArray[i].votes.length);
+                $scope.votingPlayerArray = $scope.match.players;
+                if (newValue && !$scope.isGameMaster && $scope.match.players[$scope.playerID].alive) {
+                    Materialize.toast("Abstimmung ist jetzt möglich.", 5000, 'blue');
+                    $scope.hasVoted = false;
+                }
+
+
+                if (newValue === false || $scope.isGameMaster && $scope.votingPlayerArray) {
+                    $scope.votingPlayerArray.sort(compare);
+                    console.log($scope.votingPlayerArray)
+                    $scope.labels = [];
+                    $scope.data = [];
+                    for (var i = 0; i < $scope.votingPlayerArray.length; i++) {
+                        if ($scope.votingPlayerArray[i].alive) {
+                            if ($scope.votingPlayerArray[i].nominated || $scope.votingPlayerArray[i].votes.length > 0) {
+                                $scope.labels.push($scope.votingPlayerArray[i].playerName);
+                                $scope.data.push($scope.votingPlayerArray[i].votes.length);
+                            }
+                        }
+                    }
+                    if ($scope.isGameMaster && oldValue === true) {
+                        if ($scope.votingPlayerArray[0].votes.length !== $scope.votingPlayerArray[1].votes.length) {
+                            $scope.killPlayer($scope.votingPlayerArray[0].playerID);
                         }
                     }
                 }
-                if ($scope.isGameMaster && oldValue === true) {
-                    if ($scope.votingPlayerArray[0].votes.length !== $scope.votingPlayerArray[1].votes.length) {
-                        $scope.killPlayer($scope.votingPlayerArray[0].playerID);
-                    }
-                }
-            }
+
         });
 
         $scope.$watch('match.pollCountdown', function (newValue, oldValue) {
