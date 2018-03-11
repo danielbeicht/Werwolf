@@ -246,7 +246,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 name: "Gerber",
                 description: "Der Gerber gewinnt nur, wenn er bis zum Spielende umgebracht wird. Die Siegbedingungen für die anderen Gruppen bestehen weiterhin."
             }
-        ]
+        ];
 
         $scope.inputWerewolfesCount = $scope.inputWerwolfes[1];
         $scope.inputDorfbewohnerCount = $scope.inputDorfbewohner[2];
@@ -266,7 +266,6 @@ if (history_api) history.pushState(null, '', '#StayHere');
 
 
         if ($cookies.get('matchid') && $cookies.get('gamemaster')) {
-            console.log("DRIN")
             $scope.isGameMaster = true;
             $scope.matchID = $cookies.get('matchid');
             $scope.status = 0;
@@ -278,7 +277,6 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 method: 'GET',
                 url: 'api/createNewMatch'
             }).then(function successCallback(response) {
-                console.log(response)
                 $scope.matchID = response.data.matchID;
             }, function errorCallback(response) {
                 // called asynchronously if an error occurs
@@ -301,12 +299,12 @@ if (history_api) history.pushState(null, '', '#StayHere');
                     url: 'api/joinMatch',
                     data: dataObj
                 }).then(function successCallback(response) {
-                    if (response.data.statuscode == 1) {
+                    if (response.data.statuscode === 1) {
                         $scope.matchID = response.data.match.matchID;
                         $scope.playerID = response.data.playerID;
                         $scope.playerName = response.data.playerName;
                         $scope.status = 2;
-                    } else if (response.data.statuscode == 3) {
+                    } else if (response.data.statuscode === 3) {
                         Materialize.toast("Spiel wurde bereits gestartet.", 3000, 'blue');
                     } else {
                         Materialize.toast("Spiel nicht gefunden.", 3000, 'blue');
@@ -390,7 +388,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
             });
         }
 
-        $scope.stopVotingPhase = function (playerID) {
+        $scope.stopVotingPhase = function () {
             var dataObj = {
                 matchID: $scope.matchID
             };
@@ -404,8 +402,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
             });
         }
 
-        $scope.startDayPhase = function (playerID) {
-            console.log($scope.dayInputSlider)
+        $scope.startDayPhase = function () {
             var dataObj = {
                 matchID: $scope.matchID,
                 dayTime: $scope.slider.value
@@ -474,7 +471,6 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 url: 'api/votePlayer',
                 data: dataObj
             }).then(function successCallback(response) {
-                console.log("VOTED")
                 $scope.selection = {voteRadioSelected: -1};
                 $scope.hasVoted = true;
             }, function errorCallback(response) {
@@ -492,31 +488,6 @@ if (history_api) history.pushState(null, '', '#StayHere');
             return genString;
         }
 
-        $scope.calculateCards = function () {
-            var count = 0;
-            count += $scope.inputWerewolfesCount.value;
-            count += $scope.inputDorfbewohnerCount.value;
-            if ($scope.inputHexe) {
-                count += 1;
-            }
-            if ($scope.inputSeherin) {
-                count += 1;
-            }
-            if ($scope.inputArmor) {
-                count += 1;
-            }
-            if ($scope.inputHunter) {
-                count += 1;
-            }
-            if ($scope.inputDieb) {
-                count += 1;
-            }
-            if ($scope.inputKind) {
-                count += 1;
-            }
-            return count;
-        }
-
         $scope.resetVoting = function () {
             var dataObj = {
                 matchID: $scope.match.matchID
@@ -526,7 +497,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 url: 'api/resetVoting',
                 data: dataObj
             }).then(function successCallback(response) {
-                console.log("VOTING RESETTED")
+                console.log("VOTING RESETTED");
             }, function errorCallback(response) {
             });
         }
@@ -541,7 +512,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 url: 'api/promoteMayor',
                 data: dataObj
             }).then(function successCallback(response) {
-                console.log("Mayor promoted")
+                console.log("Mayor promoted");
             }, function errorCallback(response) {
             });
         }
@@ -556,7 +527,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 url: 'api/swapLoverStatus',
                 data: dataObj
             }).then(function successCallback(response) {
-                console.log("Loverstatus swapped")
+                console.log("Loverstatus swapped");
             }, function errorCallback(response) {
             });
         }
@@ -568,7 +539,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
         $scope.showAdditionalInformation = function () {
             $scope.additionalInformationTimer = 5;
             var downloadTimer = setInterval(function () {
-                console.log($scope.additionalInformationTimer)
+                console.log($scope.additionalInformationTimer);
                 $scope.additionalInformationTimer = --$scope.additionalInformationTimer;
                 if ($scope.additionalInformationTimer <= 0) {
                     clearInterval(downloadTimer);
@@ -578,7 +549,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
 
         $scope.thiefExists = function () {
             for (var i = 0; i < $scope.match.players.length; i++) {
-                if ($scope.match.players[i].role == 6) {
+                if ($scope.match.players[i].role === 6) {
                     return true;
                 }
             }
@@ -603,7 +574,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 url: 'api/handoutThiefCards',
                 data: dataObj
             }).then(function successCallback(response) {
-                console.log("Dieb wählt nun Karten")
+                console.log("Dieb wählt nun Karten");
             }, function errorCallback(response) {
             });
         }
@@ -636,7 +607,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                     url: 'api/newMatch',
                     data: dataObj
                 }).then(function successCallback(response) {
-                    console.log("Spiel wurde zurückgesetzt.")
+                    console.log("Spiel wurde zurückgesetzt.");
                 }, function errorCallback(response) {
                 });
             }
@@ -750,7 +721,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
         });
 
         $scope.$watch('status', function (newValue, oldValue) {
-            if (newValue == 1 || newValue == 2) {
+            if (newValue === 1 || newValue === 2) {
                 $rootScope.bodylayout = 'wartehalle';
             } else {
                 $rootScope.bodylayout = '';
