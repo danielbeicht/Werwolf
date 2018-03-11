@@ -376,9 +376,17 @@
         </div>
 
         <div id="playerRolesInfo" class="col s12">
-            <h4 class="whiteText">Rolleninformation</h4>
+            <h5 class="whiteText">Rollen im Spiel</h5>
             <ul class="collapsible" data-collapsible="accordion">
-                <li ng-repeat="role in roles | orderBy:'name'">
+                <li ng-repeat="role in roles | orderBy:'name'" ng-show="match.possibleRoles.indexOf(role.id) > -1">
+                    <div class="collapsible-header primaryBackground whiteText">{{ role.name }}</div>
+                    <div class="collapsible-body primaryBackground whiteText">{{ role.description }}</div>
+                </li>
+            </ul>
+
+            <h5 class="whiteText">Rollen nicht im Spiel</h5>
+            <ul class="collapsible" data-collapsible="accordion">
+                <li ng-repeat="role in roles | orderBy:'name'" ng-show="match.possibleRoles.indexOf(role.id) < 0">
                     <div class="collapsible-header primaryBackground whiteText">{{ role.name }}</div>
                     <div class="collapsible-body primaryBackground whiteText">{{ role.description }}</div>
                 </li>
