@@ -255,7 +255,7 @@
         <!-- Header Tabs -->
         <div class="col s12">
             <ul tabs reload="allTabContentLoaded">
-                <li class="tab col s6"><a class="active" href="#information">Information</a></li>
+                <li class="tab col s6"><a class="active" href="#information">Spiel</a></li>
                 <li class="tab col s6"><a href="#playervoting">Abstimmung</a></li>
                 <li class="tab col s4"><a href="#playerRolesInfo"><i class="material-icons tabicon">help</i></a></li>
             </ul>
@@ -280,7 +280,7 @@
             <!-- Rolleninfo- und beschreibung -->
             <ul class="collapsible primaryBackground" data-collapsible="accordion">
                 <li>
-                    <div class="collapsible-header whiteText primaryBackground"><i class="material-icons">info_outline</i>Rolle/Status</div>
+                    <div class="collapsible-header whiteText primaryBackground"><i class="material-icons">info_outline</i>Deine Rolle</div>
                     <div class="collapsible-body whiteText primaryBackground"><span>
                         <h4 class="whiteText">Du bist {{ roles[match.players[playerID].role].name }}</h4> (Bilder folgen)<br><br>
                         <span class="whiteText">Du <span ng-show="match.players[playerID].alive">lebst</span> <span ng-show="!match.players[playerID].alive">bist tot</span></span>
