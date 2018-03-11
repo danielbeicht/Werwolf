@@ -317,6 +317,9 @@
                     <span class="new badge red" data-badge-caption="" ng-show="match.players[$index].lover && match.players[playerID].lover && additionalInformationTimer > 0 || !match.players[$index].alive && match.players[$index].lover && additionalInformationTimer > 0">
                         <span>Liebespaar</span>
                     </span>
+                    <span class="new badge red" data-badge-caption="" ng-show="match.players[$index].alive && match.players[playerID].alive && match.players[$index].role == 0 && match.players[playerID].role == 0 && additionalInformationTimer > 0">
+                        <span>Werwolf</span>
+                    </span>
                 </li>
             </ul>
         </div>
