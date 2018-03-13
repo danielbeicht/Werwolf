@@ -23,7 +23,7 @@
             <h4 class="whiteText">Spieler-Übersicht</h4>
             <ul class="collection with-header primaryBackground" style="margin-top: 10px">
                 <li class="collection-header"><h5>Spieler ({{ match.players.length }})</h5></li>
-                <li class="collection-item" ng-repeat="player in match.players"><div>{{ player.playerName }} - {{ roles[player.role].name }}<span class="secondary-content" ng-click="kickPlayer(player.playerID)"><i class="fa fa-ban redIcon" aria-hidden="true"></i></span></div></li>
+                <li class="collection-item" ng-repeat="player in match.players"><div>{{ player.playerName }} - {{ roles[player.role].name }}<span class="secondary-content" ng-click="kickPlayer(player.playerID, false)"><i class="fa fa-ban redIcon" aria-hidden="true"></i></span></div></li>
             </ul>
             <div class="col s12 m6">
                 <center><button class="btn waves-effect waves-light" style="margin-top: 10px" type="submit" name="action" ng-click="assignRoles()" ng-disabled="match.players.length < 1">Rollen zuordnen
@@ -174,11 +174,11 @@
                             <span ng-show="match.players[$index].alive">{{ roles[player.role].name }}</span>
                             <span ng-show="!match.players[$index].alive">{{ roles[player.role].name }}</span>
                         </span>
-                        <span class="secondary-content" ng-if="match.players[$index].alive" ng-click="killPlayer($index)"><i class="material-icons bluePrimaryIcon">clear</i></span>
-                        <span class="secondary-content" ng-if="!match.players[$index].alive" ng-click="revivePlayer($index)"><i class="material-icons bluePrimaryIcon">add</i></span>
+                        <span class="secondary-content" ng-if="match.players[$index].alive" ng-click="killPlayer(match.players[$index].playerID)"><i class="material-icons bluePrimaryIcon">clear</i></span>
+                        <span class="secondary-content" ng-if="!match.players[$index].alive" ng-click="revivePlayer(match.players[$index].playerID)"><i class="material-icons bluePrimaryIcon">add</i></span>
 
-                        <span class="secondary-content" ng-click="promoteMayor($index)"><i ng-class="{ 'grayIcon': !match.players[$index].mayor, 'greenIcon': match.players[$index].mayor, 'fa fa-balance-scale fa-lg': true }"></i></span>
-                        <span ng-show="armorExists()" class="secondary-content" ng-click="swapLoverStatus($index)"><i ng-class="{ 'grayIcon': !match.players[$index].lover, 'redIcon': match.players[$index].lover, 'fa fa-heart fa-lg': true }" aria-hidden="true"></i></span>
+                        <span class="secondary-content" ng-click="promoteMayor(match.players[$index].playerID)"><i ng-class="{ 'grayIcon': !match.players[$index].mayor, 'greenIcon': match.players[$index].mayor, 'fa fa-balance-scale fa-lg': true }"></i></span>
+                        <span ng-show="armorExists()" class="secondary-content" ng-click="swapLoverStatus(match.players[$index].playerID)"><i ng-class="{ 'grayIcon': !match.players[$index].lover, 'redIcon': match.players[$index].lover, 'fa fa-heart fa-lg': true }" aria-hidden="true"></i></span>
                     </td>
                 </tr>
             </table>
@@ -203,11 +203,11 @@
                     <li class="collection-item" ng-repeat="player in match.players" ng-show="player.alive">{{ player.playerName }} - {{ roles[player.role].name }}
                         <span ng-class="{ 'new badge blue': match.players[$index].nominated, 'new badge black': !match.players[$index].nominated }" data-badge-caption="" ng-show="!match.votingPhase">
                             <span ng-show="match.players[$index].nominated">Nominiert</span><span ng-show="!match.players[$index].nominated">Nicht nominiert</span></span>
-                        <span class="secondary-content" ng-show="match.players[$index].nominated && !match.votingPhase" ng-click="undoNominatePlayer($index)">
+                        <span class="secondary-content" ng-show="match.players[$index].nominated && !match.votingPhase" ng-click="undoNominatePlayer(match.players[$index].playerID)">
                             <i class="material-icons bluePrimaryIcon">clear</i>
                         </span>
                         <span ng-show="player.hasVoted && match.votingPhase" class="new badge" data-badge-caption="Voted"></span>
-                        <span class="secondary-content" ng-show="!match.players[$index].nominated" ng-click="nominatePlayer($index)"><i class="material-icons bluePrimaryIcon">add</i></span>
+                        <span class="secondary-content" ng-show="!match.players[$index].nominated" ng-click="nominatePlayer(match.players[$index].playerID)"><i class="material-icons bluePrimaryIcon">add</i></span>
                     </li>
                 </ul>
             <center>
@@ -270,7 +270,7 @@
             <br>
 
             <!-- Dieb Kartenwahl -->
-            <div ng-if="match.players[playerID].role == 6 && match.thiefStatus == 1">
+            <div ng-if="player.role == 6 && match.thiefStatus == 1">
                 <ul class="collection">
                     <li class="collection-item">
                         <span style="font-size: 150%">Dieb Kartenauswahl</span>
@@ -288,14 +288,14 @@
                 <li>
                     <div class="collapsible-header whiteText primaryBackground"><i class="material-icons">info_outline</i>Deine Rolle</div>
                     <div class="collapsible-body whiteText primaryBackground"><span>
-                        <h4 class="whiteText">Du bist {{ roles[match.players[playerID].role].name }}</h4> (Bilder folgen)<br><br>
-                        <span class="whiteText">Du <span ng-show="match.players[playerID].alive">lebst</span> <span ng-show="!match.players[playerID].alive">bist tot</span></span>
+                        <h4 class="whiteText">Du bist {{ roles[player.role].name }}</h4> (Bilder folgen)<br><br>
+                        <span class="whiteText">Du <span ng-show="player.alive">lebst</span> <span ng-show="!player.alive">bist tot</span></span>
                     </span></div>
                 </li>
                 <li>
                     <div class="collapsible-header whiteText primaryBackground"><i class="material-icons">subject</i>Rollenbeschreibung</div>
                     <div class="collapsible-body whiteText primaryBackground"><span>
-                        {{ roles[match.players[playerID].role].description }}
+                        {{ roles[player.role].description }}
                     </span></div>
                 </li>
             </ul>
@@ -308,7 +308,7 @@
                 </li>
                 <li class="collection-item" ng-repeat="player in match.players">{{ player.playerName }}
 
-                    <span ng-class="{ 'secondary-content new badge blueBackground': match.players[$index].alive, 'secondary-content new badge red': !match.players[$index].alive }" data-badge-caption="" ng-show="additionalInformationTimer > 0 && !match.players[playerID].alive && $index != playerID">
+                    <span ng-class="{ 'secondary-content new badge blueBackground': match.players[$index].alive, 'secondary-content new badge red': !match.players[$index].alive }" data-badge-caption="" ng-show="additionalInformationTimer > 0 && !player.alive && $index != playerID">
                         <span ng-show="match.players[$index].alive">{{ roles[player.role].name }}</span>
                         <span ng-show="!match.players[$index].alive">{{ roles[player.role].name }}</span>
                     </span>
@@ -320,10 +320,10 @@
                     <span class="new badge green" data-badge-caption="" ng-show="match.players[$index].mayor">
                         <span>Bürgermeister</span>
                     </span>
-                    <span class="new badge red" data-badge-caption="" ng-show="match.players[$index].lover && match.players[playerID].lover && additionalInformationTimer > 0 || !match.players[$index].alive && match.players[$index].lover && additionalInformationTimer > 0">
+                    <span class="new badge red" data-badge-caption="" ng-show="match.players[$index].lover && player.lover && additionalInformationTimer > 0 || !match.players[$index].alive && match.players[$index].lover && additionalInformationTimer > 0">
                         <span>Liebespaar</span>
                     </span>
-                    <span class="new badge red" data-badge-caption="" ng-show="match.players[$index].alive && match.players[playerID].alive && match.players[$index].role == 0 && match.players[playerID].role == 0 && additionalInformationTimer > 0">
+                    <span class="new badge red" data-badge-caption="" ng-show="match.players[$index].alive && player.alive && match.players[$index].role == 0 && player.role == 0 && additionalInformationTimer > 0">
                         <span>Werwolf</span>
                     </span>
                 </li>
@@ -335,7 +335,7 @@
         <!-- Playervoting -->
         <div id="playervoting" class="col s12">
             <center>
-            <div ng-if="match.votingPhase && !hasVoted && match.players[playerID].alive">
+            <div ng-if="match.votingPhase && !hasVoted && player.alive">
                 <p ng-repeat="player in votingPlayerArray" ng-show="player.nominated">
                     <input type="radio" id="{{ player.playerID }}" ng-model="selection.voteRadioSelected" ng-value="player.playerID" name="lunch">
                     <label for="{{ player.playerID }}" class="whiteText">{{ player.playerName }}</label>
@@ -372,7 +372,7 @@
                 </table>
             </div>
 
-            <div ng-if="!match.votingPhase && !match.showPoll && match.players[playerID].alive" class="whiteText" style="margin-top: 20px" class="center-align">
+            <div ng-if="!match.votingPhase && !match.showPoll && player.alive" class="whiteText" style="margin-top: 20px" class="center-align">
                 Nominiert sind:
                 <p ng-repeat="player in match.players" ng-show="player.nominated">
                     {{ player.playerName }}

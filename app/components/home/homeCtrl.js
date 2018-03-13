@@ -16,8 +16,12 @@ if (history_api) history.pushState(null, '', '#StayHere');
         $scope.color = 99;
         $scope.matchID = -1;
         $scope.status = -1;
+
+        $scope.player = null;
         $scope.playerID = -1;
         $scope.playerName = null;
+
+
         $scope.inputVoteRadioButton = -1;
         $scope.isGameMaster = false;
         $scope.additionalInformationTimer = 0;
@@ -282,7 +286,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 // called asynchronously if an error occurs
                 // or server returns response with an error status.
             });
-        }
+        };
 
         $scope.joinMatch = function () {
             if (!$scope.inputMatchID) {
@@ -312,7 +316,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 }, function errorCallback(response) {
                 });
             }
-        }
+        };
 
         $scope.killPlayer = function (playerID) {
             var dataObj = {
@@ -327,7 +331,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 console.log("Player killed");
             }, function errorCallback(response) {
             });
-        }
+        };
 
         $scope.revivePlayer = function (playerID) {
             var dataObj = {
@@ -342,7 +346,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 console.log("Player revived");
             }, function errorCallback(response) {
             });
-        }
+        };
 
         $scope.nominatePlayer = function (playerID) {
             var dataObj = {
@@ -357,7 +361,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 console.log("Player nominated");
             }, function errorCallback(response) {
             });
-        }
+        };
 
         $scope.undoNominatePlayer = function (playerID) {
             var dataObj = {
@@ -372,9 +376,9 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 console.log("Undo nomiation");
             }, function errorCallback(response) {
             });
-        }
+        };
 
-        $scope.startVotingPhase = function (playerID) {
+        $scope.startVotingPhase = function () {
             var dataObj = {
                 matchID: $scope.matchID
             };
@@ -386,7 +390,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 console.log("Voting phase started");
             }, function errorCallback(response) {
             });
-        }
+        };
 
         $scope.stopVotingPhase = function () {
             var dataObj = {
@@ -400,7 +404,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 console.log("Voting phase started");
             }, function errorCallback(response) {
             });
-        }
+        };
 
         $scope.startDayPhase = function () {
             var dataObj = {
@@ -415,7 +419,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 console.log("Day phase started");
             }, function errorCallback(response) {
             });
-        }
+        };
 
         $scope.assignRoles = function () {
             var roles = [];
@@ -443,7 +447,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 $scope.rolesAssigned = true;
             }, function errorCallback(response) {
             });
-        }
+        };
 
         $scope.startMatch = function () {
             var dataObj = {
@@ -457,7 +461,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
 
             }, function errorCallback(response) {
             });
-        }
+        };
 
 
         $scope.votePlayer = function () {
@@ -475,18 +479,19 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 $scope.hasVoted = true;
             }, function errorCallback(response) {
             });
-        }
+        };
 
         $scope.generateVoteString = function (player) {
             var genString = '';
             for (var i = 0; i < player.votes.length; i++) {
-                genString = genString.concat($scope.match.players[player.votes[i]].playerName);
+                var curplayer = _.find($scope.match.players, function(o) {return o.playerID === player.votes[i];});
+                genString = genString.concat(curplayer.playerName);
                 if (i < player.votes.length - 1) {
                     genString = genString.concat(", ");
                 }
             }
             return genString;
-        }
+        };
 
         $scope.resetVoting = function () {
             var dataObj = {
@@ -500,7 +505,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 console.log("VOTING RESETTED");
             }, function errorCallback(response) {
             });
-        }
+        };
 
         $scope.promoteMayor = function (playerID) {
             var dataObj = {
@@ -515,7 +520,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 console.log("Mayor promoted");
             }, function errorCallback(response) {
             });
-        }
+        };
 
         $scope.swapLoverStatus = function (playerID) {
             var dataObj = {
@@ -530,11 +535,11 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 console.log("Loverstatus swapped");
             }, function errorCallback(response) {
             });
-        }
+        };
 
         $scope.toastMessage = function (message) {    // obsolete
             Materialize.toast(message, 3000, 'blue');
-        }
+        };
 
         $scope.showAdditionalInformation = function () {
             $scope.additionalInformationTimer = 5;
@@ -545,7 +550,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                     clearInterval(downloadTimer);
                 }
             }, 1000);
-        }
+        };
 
         $scope.thiefExists = function () {
             for (var i = 0; i < $scope.match.players.length; i++) {
@@ -554,7 +559,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 }
             }
             return false;
-        }
+        };
 
         $scope.armorExists = function () {
             for (var i = 0; i < $scope.match.players.length; i++) {
@@ -563,7 +568,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 }
             }
             return false;
-        }
+        };
 
         $scope.handoutThiefCards = function () {
             var dataObj = {
@@ -577,7 +582,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 console.log("Dieb wählt nun Karten");
             }, function errorCallback(response) {
             });
-        }
+        };
 
         $scope.setNewThiefRole = function (roleID) {
             var dataObj = {
@@ -593,7 +598,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 Materialize.toast("Du bist nun ".concat($scope.roles[roleID].name), 2000, 'blue');
             }, function errorCallback(response) {
             });
-        }
+        };
 
         $scope.newMatch = function () {
             var conf = confirm("Willst du wirklich ein neues Spiel starten?");
@@ -611,11 +616,15 @@ if (history_api) history.pushState(null, '', '#StayHere');
                 }, function errorCallback(response) {
                 });
             }
-        }
+        };
 
-        $scope.kickPlayer = function (playerID) {
-            var conf = confirm("Willst du wirklich den Spieler entfernen?");
-            if (conf) {
+        $scope.kickPlayer = function (playerID, force) {
+            var player = _.find($scope.match.players, function(o) {return o.playerID === playerID;});
+            if (!force) {
+                var conf = confirm("Willst du wirklich " + player.playerName + " kicken?");
+            }
+
+            if (force || conf) {
                 init();
                 var dataObj = {
                     matchID: $scope.match.matchID,
@@ -634,13 +643,31 @@ if (history_api) history.pushState(null, '', '#StayHere');
 
         $scope.leaveMatch = function () {
             if (confirm("Willst du das Spiel wirklich verlassen?")) {
+                if (!$scope.isGameMaster) {
+                    var dataObj = {
+                        matchID: $scope.match.matchID,
+                        playerID: $scope.playerID
+                    };
+                    $http({
+                        method: 'POST',
+                        url: 'api/kickPlayer',
+                        data: dataObj
+                    }).then(function successCallback(response) {
+
+                    }, function errorCallback(response) {
+                    });
+                } else {
+                    for (var i=0; i<$scope.match.players.length; i++) {
+                        $scope.kickPlayer($scope.match.players[i].playerID, true);
+                    }
+                }
+
                 $cookies.remove("matchid", {path: "/"});
                 $cookies.remove("playername", {path: "/"});
                 $cookies.remove("playerid", {path: "/"});
                 $cookies.remove("gamemaster", {path: "/"});
                 $scope.status = -1;
             }
-
         };
 
         $scope.$watch('matchID', function (newValue, oldValue) {
@@ -660,7 +687,9 @@ if (history_api) history.pushState(null, '', '#StayHere');
                         // called asynchronously if an error occurs
                         // or server returns response with an error status.
                     })
-                    $timeout(tick, 300);
+                    if ($scope.matchID !== -1) {
+                        $timeout(tick, 300);
+                    }
                 })();
             }
         });
@@ -677,15 +706,18 @@ if (history_api) history.pushState(null, '', '#StayHere');
         //
         $scope.$watch('match.votingPhase', function (newValue, oldValue) {
                 $scope.votingPlayerArray = $scope.match.players;
-                if (newValue && !$scope.isGameMaster && $scope.match.players[$scope.playerID].alive) {
+
+                var player = _.find($scope.match.players, function(o) {return o.playerID === $scope.playerID;});
+
+                if (newValue && !$scope.isGameMaster && player.alive) {
                     Materialize.toast("Abstimmung ist jetzt möglich.", 5000, 'blue');
                     $scope.hasVoted = false;
                 }
 
 
                 if (newValue === false || $scope.isGameMaster && $scope.votingPlayerArray) {
-                    $scope.votingPlayerArray.sort(compare);
-                    console.log($scope.votingPlayerArray)
+                    $scope.votingPlayerArray.sort(compareVotes);
+
                     $scope.labels = [];
                     $scope.data = [];
                     for (var i = 0; i < $scope.votingPlayerArray.length; i++) {
@@ -707,9 +739,6 @@ if (history_api) history.pushState(null, '', '#StayHere');
 
         $scope.$watch('match.pollCountdown', function (newValue, oldValue) {
 
-            //var temp = "Abstimmung endet in ";
-            //$scope.toastText = temp.concat($scope.match.pollCountdown)
-            //Materialize.toast($scope.toastText, 1000);
         });
 
         $scope.$watch('match.dayCountdown', function (newValue, oldValue){
@@ -747,10 +776,13 @@ if (history_api) history.pushState(null, '', '#StayHere');
         });
 
         $scope.$watchCollection('match.players', function (newCollection, oldCollection) {
+
+            $scope.player = _.find(newCollection, function(o) {return o.playerID === $scope.playerID;});
+
             if (newCollection && oldCollection && newCollection.length === oldCollection.length) {
                 for (var i = 0; i < newCollection.length; i++) {
                     if (newCollection[i].alive !== oldCollection[i].alive && !newCollection[i].alive) {
-                        if (i === $scope.playerID) {
+                        if (newCollection[i].playerID === $scope.playerID) {
                             Materialize.toast("Du bist gestorben.", 4000, 'blue');
                         } else {
                             Materialize.toast(newCollection[i].playerName.concat(" ist gestorben."), 4000, 'blue');
@@ -760,20 +792,13 @@ if (history_api) history.pushState(null, '', '#StayHere');
             }
 
             if (newCollection && oldCollection && newCollection.length < oldCollection.length && !$scope.isGameMaster) {
-                console.log("Jemand ist raus");
-                if (newCollection[$scope.playerID]) {
-                    if (newCollection[$scope.playerID].playerName !== $scope.playerName) {
-                        $scope.status = -1;
-                        Materialize.toast("Du wurdest aus dem Spiel entfernt.", 4000, 'blue');
-                    }
-                } else {
+                var player = _.find(newCollection, function(o) {return o.playerID === $scope.playerID;});
+                if (!player) {
                     $scope.status = -1;
+                    $scope.matchID = -1;
                     Materialize.toast("Du wurdest aus dem Spiel entfernt.", 4000, 'blue');
                 }
-
-
             }
-
         });
 
         $scope.$watch('match.restartMatch', function (newValue, oldValue) {
@@ -808,7 +833,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
         });
 
 
-        function compare(a, b) {
+        function compareVotes(a, b) {
             if (a.votes.length > b.votes.length)
                 return -1;
             if (a.votes.length < b.votes.length)

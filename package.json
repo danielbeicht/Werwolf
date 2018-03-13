@@ -28,6 +28,7 @@
     "chartjs": "^0.3.24",
     "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",
+    "lodash": "^4.17.5",
     "material-icons": "^0.1.0",
     "materialize-css": "^0.100.2"
   }

@@ -7,6 +7,7 @@ var shuffle = require('knuth-shuffle').knuthShuffle;
 var _ = require('lodash');
 
 var matches = {};
+var playercount = 0;
 
 var requestcount = 0;
 
@@ -65,7 +66,7 @@ app.get('/api/createNewMatch', function (req, res) {
 app.post('/api/joinMatch', function (req, res) {
     if (matches[req.body.matchID]) {
         if (matches[req.body.matchID].matchStarted === false) {
-            var playerID = matches[req.body.matchID].players.length
+            var playerID = playercount++;
             matches[req.body.matchID].players.push({
                 playerName: req.body.playerName,
                 playerID: playerID,
@@ -80,8 +81,8 @@ app.post('/api/joinMatch', function (req, res) {
             res.cookie("matchid" , req.body.matchID.toString()).cookie("playername" , req.body.playerName).cookie("playerid" , playerID).send({
                 match: matches[req.body.matchID],
                 statuscode: 1,
-                playerID: matches[req.body.matchID].players.length - 1,
-                playerName: matches[req.body.matchID].players[matches[req.body.matchID].players.length - 1].playerName
+                playerID: playerID,
+                playerName: req.body.playerName
             });
         } else {
             res.send({statuscode: 3});
@@ -92,9 +93,11 @@ app.post('/api/joinMatch', function (req, res) {
 });
 
 app.post('/api/killPlayer', function (req, res) {
-    matches[req.body.matchID].players[req.body.playerID].alive = false;
+    var player = _.find(matches[req.body.matchID].players, function(o) {return o.playerID === req.body.playerID;});
+    player.alive = false;
+
     // Kill lover
-    if (matches[req.body.matchID].players[req.body.playerID].lover) {
+    if (player.lover) {
         for (var i = 0; i < matches[req.body.matchID].players.length; i++) {
             if (matches[req.body.matchID].players[i].lover) {
                 matches[req.body.matchID].players[i].alive = false;
@@ -105,17 +108,20 @@ app.post('/api/killPlayer', function (req, res) {
 });
 
 app.post('/api/revivePlayer', function (req, res) {
-    matches[req.body.matchID].players[req.body.playerID].alive = true;
+    var player = _.find(matches[req.body.matchID].players, function(o) {return o.playerID === req.body.playerID;});
+    player.alive = true;
     res.send("ok");
 });
 
 app.post('/api/nominatePlayer', function (req, res) {
-    matches[req.body.matchID].players[req.body.playerID].nominated = true;
+    var player = _.find(matches[req.body.matchID].players, function(o) {return o.playerID === req.body.playerID;});
+    player.nominated = true;
     res.send("ok");
 });
 
 app.post('/api/undoNominatePlayer', function (req, res) {
-    matches[req.body.matchID].players[req.body.playerID].nominated = false;
+    var player = _.find(matches[req.body.matchID].players, function(o) {return o.playerID === req.body.playerID;});
+    player.nominated = false;
     res.send("ok");
 });
 
@@ -123,18 +129,19 @@ app.post('/api/promoteMayor', function (req, res) {
     for (var i = 0; i < matches[req.body.matchID].players.length; i++) {
         matches[req.body.matchID].players[i].mayor = false;
     }
-    matches[req.body.matchID].players[req.body.playerID].mayor = true;
+    var player = _.find(matches[req.body.matchID].players, function(o) {return o.playerID === req.body.playerID;});
+    player.mayor = true;
     res.send("ok");
 });
 
 app.post('/api/swapLoverStatus', function (req, res) {
-    matches[req.body.matchID].players[req.body.playerID].lover = !matches[req.body.matchID].players[req.body.playerID].lover;
+    var player = _.find(matches[req.body.matchID].players, function(o) {return o.playerID === req.body.playerID;});
+    player.lover = !player.lover;
     res.send("ok");
 });
 
 app.post('/api/getMatchInfo', function (req, res) {
     requestcount++;
-    console.log(new Date().toISOString().concat(": Request for " + req.body.matchID));
     res.send(matches[req.body.matchID]);
 });
 
@@ -157,7 +164,7 @@ app.post('/api/stopVotingPhase', function (req, res) {
             // Wenn jemand nicht gevotet hat stimmt er für sich
             for (var i = 0; i < matches[req.body.matchID].players.length; i++) {
                 if (!matches[req.body.matchID].players[i].hasVoted && matches[req.body.matchID].players[i].alive) {
-                    matches[req.body.matchID].players[i].votes.push(i);
+                    matches[req.body.matchID].players[i].votes.push(matches[req.body.matchID].players[i].playerID);
                 }
             }
             matches[req.body.matchID].votingPhase = false;
@@ -168,8 +175,6 @@ app.post('/api/stopVotingPhase', function (req, res) {
             clearInterval(downloadTimer);
         }
     }, 1000);
-
-
     res.send("ok");
 });
 
@@ -189,8 +194,10 @@ app.post('/api/startDayPhase', function (req, res) {
 });
 
 app.post('/api/votePlayer', function (req, res) {
-    matches[req.body.matchID].players[req.body.votePlayerID].votes.push(req.body.playerID);
-    matches[req.body.matchID].players[req.body.playerID].hasVoted = true;
+    var player = _.find(matches[req.body.matchID].players, function(o) {return o.playerID === req.body.playerID;});
+    var votedPlayer = _.find(matches[req.body.matchID].players, function(o) {return o.playerID === req.body.votePlayerID;});
+    votedPlayer.votes.push(player.playerID);
+    player.hasVoted = true;
     res.send("ok");
 });
 
@@ -209,13 +216,13 @@ app.post('/api/handoutThiefCards', function (req, res) {
 });
 
 app.post('/api/setNewThiefRole', function (req, res) {
-    matches[req.body.matchID].players[req.body.playerID].role = req.body.roleID;
+    var player = _.find(matches[req.body.matchID].players, function(o) {return o.playerID === req.body.playerID;});
+    player.role = req.body.roleID;
     matches[req.body.matchID].thiefStatus = 2;
     res.send("ok");
 });
 
 app.post('/api/assignRoles', function (req, res) {
-
     var roles = req.body.roles;
     roles = shuffle(roles);
     matches[req.body.matchID].thiefCards = [];
@@ -236,7 +243,7 @@ app.post('/api/assignRoles', function (req, res) {
 });
 
 app.post('/api/kickPlayer', function (req, res) {
-    matches[req.body.matchID].players.remove(req.body.playerID);
+    _.remove(matches[req.body.matchID].players, function(n) {return n.playerID === req.body.playerID;});
     res.send("ok");
 });
 
@@ -246,7 +253,7 @@ app.post('/api/startMatch', function (req, res) {
 });
 
 app.post('/api/newMatch', function (req, res) {
-    console.log(req.body.matchID)
+    console.log(req.body.matchID);
     matches[req.body.matchID].matchStarted = false;
     matches[req.body.matchID].votingPhase = false;
     matches[req.body.matchID].showPoll = false;
