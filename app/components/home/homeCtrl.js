@@ -544,7 +544,6 @@ if (history_api) history.pushState(null, '', '#StayHere');
         $scope.showAdditionalInformation = function () {
             $scope.additionalInformationTimer = 5;
             var downloadTimer = setInterval(function () {
-                console.log($scope.additionalInformationTimer);
                 $scope.additionalInformationTimer = --$scope.additionalInformationTimer;
                 if ($scope.additionalInformationTimer <= 0) {
                     clearInterval(downloadTimer);
@@ -681,7 +680,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                         url: 'api/getMatchInfo',
                         data: dataObj
                     }).then(function successCallback(response) {
-                        //console.log(response.data)
+                        console.log(response.data);
                         $scope.match = response.data;
                     }, function errorCallback(response) {
                         // called asynchronously if an error occurs
@@ -809,7 +808,6 @@ if (history_api) history.pushState(null, '', '#StayHere');
                     var timeleft = 10;
                     var downloadTimer = setInterval(function () {
                         --timeleft
-                        console.log(timeleft)
                         if (timeleft <= 0) {
                             var dataObj = {
                                 matchID: $scope.match.matchID
@@ -819,7 +817,7 @@ if (history_api) history.pushState(null, '', '#StayHere');
                                 url: 'api/resetRestartMatchVar',
                                 data: dataObj
                             }).then(function successCallback(response) {
-                                console.log("ResetMatchVar wurde zurückgesetzt.")
+                                console.log("ResetMatchVar wurde zurückgesetzt.");
                             }, function errorCallback(response) {
                             });
                             clearInterval(downloadTimer);

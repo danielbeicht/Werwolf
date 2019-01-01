@@ -23,7 +23,7 @@
             <h4 class="whiteText">Spieler-Übersicht</h4>
             <ul class="collection with-header primaryBackground" style="margin-top: 10px">
                 <li class="collection-header"><h5>Spieler ({{ match.players.length }})</h5></li>
-                <li class="collection-item" ng-repeat="player in match.players"><div>{{ player.playerName }} - {{ roles[player.role].name }}<span class="secondary-content" ng-click="kickPlayer(player.playerID, false)"><i class="fa fa-ban redIcon" aria-hidden="true"></i></span></div></li>
+                <li class="collection-item" ng-repeat="currentPlayer in match.players"><div>{{ currentPlayer.playerName }} - {{ roles[currentPlayer.role].name }}<span class="secondary-content" ng-click="kickPlayer(currentPlayer.playerID, false)"><i class="fa fa-ban redIcon" aria-hidden="true"></i></span></div></li>
             </ul>
             <div class="col s12 m6">
                 <center><button class="btn waves-effect waves-light" style="margin-top: 10px" type="submit" name="action" ng-click="assignRoles()" ng-disabled="match.players.length < 1">Rollen zuordnen
@@ -147,7 +147,7 @@
         </div>
     </center>
     <p style="margin-top: 30px; font-family:Comic Sans MS; color: white; margin-top: 30px">Spieleranzahl: {{ match.players.length }}</p>
-    <div class="chip" ng-repeat="player in match.players">{{ player.playerName }}</div>
+    <div class="chip" ng-repeat="currentPlayer in match.players">{{ currentPlayer.playerName }}</div>
     <br>
     <center><button class="btn waves-effect waves-light" style="margin-top: 70px" type="submit" name="action" ng-click="leaveMatch()">Wartehalle verlassen</button></center>
 </div>
@@ -167,12 +167,12 @@
         <div id="uebersicht" class="col s12">
             <h5 class="whiteText">Spieler ({{ match.players.length }})</h5>
             <table class="bordered">
-                <tr ng-repeat="player in match.players" class="whiteText">
-                    <td>{{ player.playerName }}</td>
+                <tr ng-repeat="currentPlayer in match.players" class="whiteText">
+                    <td>{{ currentPlayer.playerName }}</td>
                     <td>
                         <span ng-class="{ 'secondary-content new badge blueBackground': match.players[$index].alive, 'secondary-content new badge red': !match.players[$index].alive }" data-badge-caption="">
-                            <span ng-show="match.players[$index].alive">{{ roles[player.role].name }}</span>
-                            <span ng-show="!match.players[$index].alive">{{ roles[player.role].name }}</span>
+                            <span ng-show="match.players[$index].alive">{{ roles[currentPlayer.role].name }}</span>
+                            <span ng-show="!match.players[$index].alive">{{ roles[currentPlayer.role].name }}</span>
                         </span>
                         <span class="secondary-content" ng-if="match.players[$index].alive" ng-click="killPlayer(match.players[$index].playerID)"><i class="material-icons bluePrimaryIcon">clear</i></span>
                         <span class="secondary-content" ng-if="!match.players[$index].alive" ng-click="revivePlayer(match.players[$index].playerID)"><i class="material-icons bluePrimaryIcon">add</i></span>
@@ -200,7 +200,7 @@
         <div id="abstimmung" class="col s12">
                 <ul class="collection with-header" ng-show="!match.showPoll">
                     <li class="collection-header"><h4>Spieler - Nominierung</h4></li>
-                    <li class="collection-item" ng-repeat="player in match.players" ng-show="player.alive">{{ player.playerName }} - {{ roles[player.role].name }}
+                    <li class="collection-item" ng-repeat="currentPlayer in match.players" ng-show="currentPlayer.alive">{{ currentPlayer.playerName }} - {{ roles[currentPlayer.role].name }}
                         <span ng-class="{ 'new badge blue': match.players[$index].nominated, 'new badge black': !match.players[$index].nominated }" data-badge-caption="" ng-show="!match.votingPhase">
                             <span ng-show="match.players[$index].nominated">Nominiert</span><span ng-show="!match.players[$index].nominated">Nicht nominiert</span></span>
                         <span class="secondary-content" ng-show="match.players[$index].nominated && !match.votingPhase" ng-click="undoNominatePlayer(match.players[$index].playerID)">
@@ -240,9 +240,9 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="player in votingPlayerArray" ng-show="player.alive">
-                        <td class="whiteText">{{ player.playerName }}</td>
-                        <td class="whiteText">{{ generateVoteString(player) }}</td>
+                    <tr ng-repeat="currentPlayer in votingPlayerArray" ng-show="player.alive">
+                        <td class="whiteText">{{ currentPlayer.playerName }}</td>
+                        <td class="whiteText">{{ generateVoteString(currentPlayer) }}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -288,7 +288,7 @@
                 <li>
                     <div class="collapsible-header whiteText primaryBackground"><i class="material-icons">info_outline</i>Deine Rolle</div>
                     <div class="collapsible-body whiteText primaryBackground"><span>
-                        <h4 class="whiteText">Du bist {{ roles[player.role].name }}</h4> (Bilder folgen)<br><br>
+                        <h4 class="whiteText">Du bist {{ roles[player.role].name }}</h4><br><br>
                         <span class="whiteText">Du <span ng-show="player.alive">lebst</span> <span ng-show="!player.alive">bist tot</span></span>
                     </span></div>
                 </li>
@@ -306,11 +306,11 @@
                     <span style="font-size: 150%">Spieler ({{ match.players.length }})</span>
                     <span class="secondary-content" ng-click="showAdditionalInformation()"><i class="material-icons">remove_red_eye</i></span><span class="secondary-content" ng-show="additionalInformationTimer > 0">&nbsp;{{ additionalInformationTimer }}&nbsp;</span>
                 </li>
-                <li class="collection-item" ng-repeat="player in match.players">{{ player.playerName }}
+                <li class="collection-item" ng-repeat="currentPlayer in match.players">{{ currentPlayer.playerName }}
 
                     <span ng-class="{ 'secondary-content new badge blueBackground': match.players[$index].alive, 'secondary-content new badge red': !match.players[$index].alive }" data-badge-caption="" ng-show="additionalInformationTimer > 0 && !player.alive && $index != playerID">
-                        <span ng-show="match.players[$index].alive">{{ roles[player.role].name }}</span>
-                        <span ng-show="!match.players[$index].alive">{{ roles[player.role].name }}</span>
+                        <span ng-show="match.players[$index].alive">{{ roles[currentPlayer.role].name }}</span>
+                        <span ng-show="!match.players[$index].alive">{{ roles[currentPlayer.role].name }}</span>
                     </span>
 
                     <span ng-class="{ 'new badge': match.players[$index].alive, 'new badge red': !match.players[$index].alive }" data-badge-caption="">
@@ -320,7 +320,7 @@
                     <span class="new badge green" data-badge-caption="" ng-show="match.players[$index].mayor">
                         <span>Bürgermeister</span>
                     </span>
-                    <span class="new badge red" data-badge-caption="" ng-show="match.players[$index].lover && player.lover && additionalInformationTimer > 0 || !match.players[$index].alive && match.players[$index].lover && additionalInformationTimer > 0">
+                    <span class="new badge red" data-badge-caption="" ng-show="match.players[$index].lover && player.lover && additionalInformationTimer > 0 || !match.players[$index].alive && additionalInformationTimer > 0">
                         <span>Liebespaar</span>
                     </span>
                     <span class="new badge red" data-badge-caption="" ng-show="match.players[$index].alive && player.alive && match.players[$index].role == 0 && player.role == 0 && additionalInformationTimer > 0">
@@ -336,9 +336,9 @@
         <div id="playervoting" class="col s12">
             <center>
             <div ng-if="match.votingPhase && !hasVoted && player.alive">
-                <p ng-repeat="player in votingPlayerArray" ng-show="player.nominated">
-                    <input type="radio" id="{{ player.playerID }}" ng-model="selection.voteRadioSelected" ng-value="player.playerID" name="lunch">
-                    <label for="{{ player.playerID }}" class="whiteText">{{ player.playerName }}</label>
+                <p ng-repeat="currentPlayer in votingPlayerArray" ng-show="currentPlayer.nominated">
+                    <input type="radio" id="{{ currentPlayer.playerID }}" ng-model="selection.voteRadioSelected" ng-value="currentPlayer.playerID" name="lunch">
+                    <label for="{{ currentPlayer.playerID }}" class="whiteText">{{ currentPlayer.playerName }}</label>
                 </p>
                 <button ng-class="{'btn waves-effect waves-light': true, 'pulse': match.pollCountdown > 0}" type="submit" name="action" ng-click="votePlayer()">Stimme abgeben
                     <i class="material-icons right">send</i>
@@ -364,9 +364,9 @@
                     </thead>
 
                     <tbody>
-                    <tr ng-repeat="player in votingPlayerArray" ng-show="player.nominated || player.votes.length > 0">
-                        <td class="whiteText">{{ player.playerName }}</td>
-                        <td class="whiteText">{{ generateVoteString(player) }}</td>
+                    <tr ng-repeat="currentPlayer in votingPlayerArray" ng-show="currentPlayer.nominated || currentPlayer.votes.length > 0">
+                        <td class="whiteText">{{ currentPlayer.playerName }}</td>
+                        <td class="whiteText">{{ generateVoteString(currentPlayer) }}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -374,8 +374,8 @@
 
             <div ng-if="!match.votingPhase && !match.showPoll && player.alive" class="whiteText" style="margin-top: 20px" class="center-align">
                 Nominiert sind:
-                <p ng-repeat="player in match.players" ng-show="player.nominated">
-                    {{ player.playerName }}
+                <p ng-repeat="currentPlayer in match.players" ng-show="currentPlayer.nominated">
+                    {{ currentPlayer.playerName }}
                 </p>
             </div>
             <div style="margin-top: 45%;" class="center-align">

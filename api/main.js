@@ -196,7 +196,9 @@ app.post('/api/startDayPhase', function (req, res) {
 app.post('/api/votePlayer', function (req, res) {
     var player = _.find(matches[req.body.matchID].players, function(o) {return o.playerID === req.body.playerID;});
     var votedPlayer = _.find(matches[req.body.matchID].players, function(o) {return o.playerID === req.body.votePlayerID;});
-    votedPlayer.votes.push(player.playerID);
+    if (!votedPlayer.votes.includes(player.playerID)) {
+        votedPlayer.votes.push(player.playerID);
+    }
     player.hasVoted = true;
     res.send("ok");
 });
